@@ -148,3 +148,17 @@ if __name__ == '__main__':
     print("Starting Research Paper Summarizer...")
     print("Open your browser and go to: http://localhost:5000")
     app.run(debug=True, host='0.0.0.0', port=5000)
+
+
+@Author : Varun AS, Syed Salahuddin quadri, Mohammad Omar
+
+Components:
+- Flask web server setup and configuration
+- Text preprocessing and cleaning functions
+- BART model initialization and summarization pipeline
+- Route handlers for web interface (/summarize) and API (/api/summarize)
+- Error handling and validation logic
+
+Model Used: facebook/bart-large-cnn (1.6GB download on first run)
+"""
+at the begining and commit
