@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Paper Summarizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-file-alt"></i> Research Paper Summarizer</h1>
+            <p>Paste your research paper text below and get an intelligent summary!</p>
+        </header>
+
+        <div class="main-content">
+            <form action="/summarize" method="POST" id="summarizerForm">
+                <div class="form-group">
+                    <label for="text">
+                        <i class="fas fa-paste"></i> Research Paper Text
+                    </label>
+                    <textarea 
+                        id="text" 
+                        name="text" 
+                        placeholder="Paste your research paper content here...
+
+Example: Copy and paste the abstract, introduction, methodology, results, and conclusion sections of your research paper. The summarizer works best with complete sentences and proper grammar.
+
+Minimum 50 words required."
+                        required
+                        rows="12"></textarea>
+                    <div class="char-counter">
+                        <span id="wordCount">0</span> words
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="submitBtn">
+                        <i class="fas fa-magic"></i> Generate Summary
+                    </button>
+                    <button type="button" id="clearBtn">
+                        <i class="fas fa-trash"></i> Clear Text
+                    </button>
+                </div>
+            </form>
+
+            <div class="tips">
+                <h3><i class="fas fa-lightbulb"></i> Tips for Better Summaries</h3>
+                <ul>
+                    <li>Include the abstract, introduction, and conclusion for best results</li>
+                    <li>Remove references, citations, and figure captions</li>
+                    <li>Ensure text is at least 50 words long</li>
+                    <li>The model works best with well-structured, academic text</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p>Built with <i class="fas fa-heart"></i> using BART Large CNN model</p>
+        </footer>
+    </div>
+
+    <script>
+        // Word counter
+        const textArea = document.getElementById('text');
+        const wordCount = document.getElementById('wordCount');
+        const submitBtn = document.getElementById('submitBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const form = document.getElementById('summarizerForm');
+
+        function updateWordCount() {
+            const text = textArea.value.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            wordCount.textContent = words;
+            
+            // Update button state
+            if (words < 50) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Need at least 50 words';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-magic"></i> Generate Summary';
+            }
+        }
+
+        textArea.addEventListener('input', updateWordCount);
+        textArea.addEventListener('paste', function() {
+            setTimeout(updateWordCount, 100);
+        });
+
+        clearBtn.addEventListener('click', function() {
+            textArea.value = '';
+            updateWordCount();
+            textArea.focus();
+        });
+
+        // Form submission with loading state
+        form.addEventListener('submit', function(e) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        });
+
+        // Initialize
+        updateWordCount();
+    </script>
+</body>
+</html>

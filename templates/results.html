@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary Results - Research Paper Summarizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-file-alt"></i> Research Paper Summarizer</h1>
+            <a href="/" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </header>
+
+        <div class="main-content">
+            {% if error %}
+                <div class="error-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error</h3>
+                    <p>{{ error }}</p>
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-retry"></i> Try Again
+                    </a>
+                </div>
+            {% else %}
+                <div class="results">
+                    <!-- Summary Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-file-text"></i>
+                            <div>
+                                <span class="stat-number">{{ original_words }}</span>
+                                <span class="stat-label">Original Words</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-compress-alt"></i>
+                            <div>
+                                <span class="stat-number">{{ summary_words }}</span>
+                                <span class="stat-label">Summary Words</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-percentage"></i>
+                            <div>
+                                <span class="stat-number">{{ compression_ratio }}%</span>
+                                <span class="stat-label">Compression</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generated Summary -->
+                    <div class="summary-section">
+                        <h2><i class="fas fa-magic"></i> Generated Summary</h2>
+                        <div class="summary-box">
+                            <p>{{ summary }}</p>
+                        </div>
+                        <div class="summary-actions">
+                            <button onclick="copyToClipboard()" class="btn btn-secondary">
+                                <i class="fas fa-copy"></i> Copy Summary
+                            </button>
+                            <button onclick="toggleOriginal()" class="btn btn-secondary">
+                                <i class="fas fa-eye"></i> Show Original
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Original Text (Hidden by default) -->
+                    <div class="original-section" id="originalSection" style="display: none;">
+                        <h2><i class="fas fa-document"></i> Original Text</h2>
+                        <div class="original-box">
+                            <p>{{ original_text }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="actions">
+                        <a href="/" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Summarize Another
+                        </a>
+                        <button onclick="window.print()" class="btn btn-secondary">
+                            <i class="fas fa-print"></i> Print Results
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <footer>
+            <p>Built with <i class="fas fa-heart"></i> using BART Large CNN model</p>
+        </footer>
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            const summaryText = document.querySelector('.summary-box p').textContent;
+            navigator.clipboard.writeText(summaryText).then(function() {
+                // Show success feedback
+                const btn = event.target.closest('button');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.style.backgroundColor = '#4CAF50';
+                
+                setTimeout(function() {
+                    btn.innerHTML = originalContent;
+                    btn.style.backgroundColor = '';
+                }, 2000);
+            }).catch(function(err) {
+                alert('Failed to copy text: ' + err);
+            });
+        }
+
+        function toggleOriginal() {
+            const section = document.getElementById('originalSection');
+            const btn = event.target.closest('button');
+            
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                btn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Original';
+                section.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                section.style.display = 'none';
+                btn.innerHTML = '<i class="fas fa-eye"></i> Show Original';
+            }
+        }
+
+        // Auto-focus on summary for keyboard navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const summaryBox = document.querySelector('.summary-box');
+            if (summaryBox) {
+                summaryBox.setAttribute('tabindex', '0');
+            }
+        });
+    </script>
+</body>
+</html>
